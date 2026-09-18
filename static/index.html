@@ -5,14 +5,788 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GridWise — Smart Campus Energy Optimizer | BUP CSE Fest 2026</title>
   <meta name="description" content="Production-ready LLM-assisted operator directive interpretation and Linear Programming 24-hour smart campus energy optimizer.">
-  <link rel="stylesheet" href="/static/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
-  <!-- Chart.js CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Chart.js 4.4.1 -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg-primary: #090d16;
+      --bg-surface: #0f172a;
+      --bg-card: rgba(15, 23, 42, 0.75);
+      --bg-card-hover: rgba(23, 37, 65, 0.85);
+      --bg-input: rgba(8, 13, 24, 0.85);
+      
+      --emerald-400: #34d399;
+      --emerald-500: #10b981;
+      --emerald-600: #059669;
+      --emerald-glow: rgba(16, 185, 129, 0.25);
+      
+      --cyan-400: #38bdf8;
+      --cyan-500: #0ea5e9;
+      --cyan-glow: rgba(14, 165, 233, 0.25);
+      
+      --amber-400: #fbbf24;
+      --amber-500: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.2);
+      
+      --rose-400: #fb7185;
+      --rose-500: #f43f5e;
+      
+      --purple-400: #c084fc;
+      --purple-500: #a855f7;
+
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      
+      --border-glass: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(52, 211, 153, 0.4);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+      
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-glass);
+      --shadow-glow: 0 0 25px var(--emerald-glow);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 85% 25%, rgba(14, 165, 233, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 50% 85%, rgba(168, 85, 247, 0.06) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+
+    /* Top Navigation */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2.5rem;
+      background: rgba(9, 13, 22, 0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-glass);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--emerald-500), var(--cyan-500));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-glow);
+      color: #fff;
+      font-size: 1.35rem;
+      font-weight: 800;
+    }
+
+    .brand-titles h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .badge-hackathon {
+      font-size: 0.72rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: var(--radius-full);
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--emerald-400);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .brand-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.95rem;
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-full);
+      font-size: 0.82rem;
+      color: var(--emerald-400);
+      font-weight: 500;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--emerald-400);
+      box-shadow: 0 0 12px var(--emerald-400);
+      animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.8); }
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.95rem;
+      font-size: 0.84rem;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-glass);
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 2rem 2.5rem;
+    }
+
+    /* KPI Bar */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 1.35rem 1.6rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      transition: var(--transition);
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.16);
+      background: var(--bg-card-hover);
+    }
+
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+    }
+
+    .kpi-card.emerald::after { background: var(--emerald-400); }
+    .kpi-card.cyan::after { background: var(--cyan-400); }
+    .kpi-card.amber::after { background: var(--amber-400); }
+    .kpi-card.purple::after { background: var(--purple-400); }
+
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+
+    .kpi-title {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .kpi-icon {
+      font-size: 1.25rem;
+      opacity: 0.9;
+    }
+
+    .kpi-value {
+      font-size: 1.95rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .kpi-unit {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      margin-left: 0.25rem;
+    }
+
+    .kpi-subtext {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Workspace Split */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 1.6rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border-glass);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .panel-action {
+      font-size: 0.82rem;
+      color: var(--emerald-400);
+      cursor: pointer;
+      background: none;
+      border: none;
+      text-decoration: underline;
+      transition: var(--transition);
+    }
+
+    .panel-action:hover {
+      color: var(--emerald-500);
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 0.45rem;
+    }
+
+    .form-select, .form-input, .form-textarea {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.92rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .form-select:focus, .form-input:focus, .form-textarea:focus {
+      border-color: var(--emerald-400);
+      box-shadow: 0 0 0 2px var(--emerald-glow);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 95px;
+      line-height: 1.6;
+    }
+
+    .battery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.85rem;
+      background: rgba(8, 13, 24, 0.6);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 1.1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .battery-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .battery-field label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+    }
+
+    .battery-field input {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      padding: 0.45rem 0.65rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      color: var(--emerald-400);
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .battery-field input:focus {
+      border-color: var(--emerald-400);
+    }
+
+    .chips-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .chip-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-glass);
+      color: var(--text-secondary);
+      font-size: 0.76rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .chip-btn:hover {
+      background: rgba(16, 185, 129, 0.16);
+      color: var(--emerald-400);
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 0.9rem;
+      background: linear-gradient(135deg, var(--emerald-500), #0d9488);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 1.02rem;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      box-shadow: 0 4px 15px var(--emerald-glow);
+      transition: var(--transition);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(16, 185, 129, 0.45);
+      background: linear-gradient(135deg, var(--emerald-400), var(--emerald-500));
+    }
+
+    .btn-primary.loading {
+      opacity: 0.75;
+      cursor: not-allowed;
+    }
+
+    /* Directives & Results */
+    .directives-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-bottom: 1.5rem;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .directive-card {
+      background: rgba(8, 13, 24, 0.65);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 1.1rem;
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .directive-card.active {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .directive-card.noop {
+      border-color: rgba(148, 163, 184, 0.2);
+      opacity: 0.75;
+    }
+
+    .directive-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .directive-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-full);
+    }
+
+    .tag-active {
+      background: rgba(16, 185, 129, 0.22);
+      color: var(--emerald-400);
+    }
+
+    .tag-noop {
+      background: rgba(100, 116, 139, 0.22);
+      color: var(--text-muted);
+    }
+
+    .directive-type {
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-primary);
+    }
+
+    .directive-explanation {
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 0.45rem;
+    }
+
+    .directive-params {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--cyan-400);
+    }
+
+    .param-pill {
+      background: rgba(14, 165, 233, 0.12);
+      border: 1px solid rgba(14, 165, 233, 0.25);
+      border-radius: 4px;
+      padding: 0.2rem 0.45rem;
+    }
+
+    .plan-summary-box {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(14, 165, 233, 0.08));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius-md);
+      padding: 1.15rem 1.35rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+    }
+
+    .summary-icon {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+
+    .summary-text {
+      font-size: 0.88rem;
+      color: #e2e8f0;
+      line-height: 1.55;
+    }
+
+    /* Charts */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1.8fr 1.2fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 1.6rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+    }
+
+    .chart-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .chart-legend-custom {
+      display: flex;
+      gap: 0.85rem;
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 290px;
+      width: 100%;
+    }
+
+    /* Tabs & Table */
+    .details-section {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 1.6rem;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 3rem;
+    }
+
+    .tabs-header {
+      display: flex;
+      gap: 0.6rem;
+      border-bottom: 1px solid var(--border-glass);
+      padding-bottom: 0.85rem;
+      margin-bottom: 1.35rem;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      padding: 0.55rem 1.1rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .tab-btn.active {
+      color: var(--emerald-400);
+      background: rgba(16, 185, 129, 0.14);
+    }
+
+    .table-responsive {
+      max-height: 420px;
+      overflow-y: auto;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-glass);
+    }
+
+    .schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.86rem;
+    }
+
+    .schedule-table th {
+      background: #0b111e;
+      color: var(--text-secondary);
+      font-weight: 600;
+      padding: 0.8rem 1.1rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--border-glass);
+    }
+
+    .schedule-table td {
+      padding: 0.7rem 1.1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .schedule-table tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .badge-action {
+      font-size: 0.72rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .action-charge {
+      background: rgba(16, 185, 129, 0.18);
+      color: var(--emerald-400);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .action-discharge {
+      background: rgba(244, 63, 94, 0.18);
+      color: var(--rose-400);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+    }
+
+    .action-idle {
+      background: rgba(148, 163, 184, 0.15);
+      color: var(--text-muted);
+    }
+
+    .json-viewer-wrapper {
+      position: relative;
+    }
+
+    .btn-copy {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      z-index: 5;
+    }
+
+    .json-code {
+      background: #060a12;
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      padding: 1.35rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: #a5f3fc;
+      max-height: 420px;
+      overflow: auto;
+      white-space: pre-wrap;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2.2rem;
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      border-top: 1px solid var(--border-glass);
+    }
+
+    footer a {
+      color: var(--emerald-400);
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Top Navigation Header -->
+  <!-- Top Navigation -->
   <header class="navbar" id="mainHeader">
     <div class="brand-wrapper">
       <div class="brand-icon">⚡</div>
@@ -25,12 +799,12 @@
     <div class="nav-actions">
       <div class="status-pill" id="systemStatusPill">
         <span class="status-dot"></span>
-        <span>Service Active</span>
+        <span id="systemStatusText">Service Active</span>
       </div>
-      <a href="/docs" target="_blank" class="btn-secondary" id="navDocsBtn">
+      <a href="https://bupcsefest2026hackathon-production.up.railway.app/docs" target="_blank" class="btn-secondary" id="navDocsBtn">
         <span>📖 API Docs</span>
       </a>
-      <a href="/health" target="_blank" class="btn-secondary" id="navHealthBtn">
+      <a href="https://bupcsefest2026hackathon-production.up.railway.app/health" target="_blank" class="btn-secondary" id="navHealthBtn">
         <span>💚 Health</span>
       </a>
     </div>
@@ -46,7 +820,7 @@
           <span class="kpi-title">Total Energy Cost</span>
           <span class="kpi-icon">💰</span>
         </div>
-        <div class="kpi-value"><span id="kpiCost">0.00</span> <span class="kpi-unit">BDT</span></div>
+        <div class="kpi-value"><span id="kpiCost">38,365.00</span> <span class="kpi-unit">BDT</span></div>
         <div class="kpi-subtext">24-hour LP minimized cost</div>
       </div>
 
@@ -55,7 +829,7 @@
           <span class="kpi-title">Total Grid Import</span>
           <span class="kpi-icon">⚡</span>
         </div>
-        <div class="kpi-value"><span id="kpiGridKwh">0.0</span> <span class="kpi-unit">kWh</span></div>
+        <div class="kpi-value"><span id="kpiGridKwh">2,692.5</span> <span class="kpi-unit">kWh</span></div>
         <div class="kpi-subtext">Scheduled campus power drawn</div>
       </div>
 
@@ -64,7 +838,7 @@
           <span class="kpi-title">Peak Grid Demand</span>
           <span class="kpi-icon">📈</span>
         </div>
-        <div class="kpi-value"><span id="kpiPeakGrid">0.0</span> <span class="kpi-unit">kWh</span></div>
+        <div class="kpi-value"><span id="kpiPeakGrid">175.0</span> <span class="kpi-unit">kWh</span></div>
         <div class="kpi-subtext">Highest single-hour import</div>
       </div>
 
@@ -73,15 +847,15 @@
           <span class="kpi-title">Solar Energy Used</span>
           <span class="kpi-icon">☀️</span>
         </div>
-        <div class="kpi-value"><span id="kpiSolar">0.0</span> <span class="kpi-unit">kWh</span></div>
-        <div class="kpi-subtext">Green renewable energy consumed</div>
+        <div class="kpi-value"><span id="kpiSolar">847.5</span> <span class="kpi-unit">kWh</span></div>
+        <div class="kpi-subtext">Clean renewable energy consumed</div>
       </div>
     </section>
 
-    <!-- Main Workspace Split Grid -->
+    <!-- Workspace Grid -->
     <section class="workspace-grid" aria-label="Microgrid Control Workspace">
       
-      <!-- Left Panel: Microgrid Configuration & Operator Directives -->
+      <!-- Left Panel: Inputs & Directives -->
       <article class="panel" id="inputConsolePanel">
         <div class="panel-header">
           <h2 class="panel-title">
@@ -94,7 +868,10 @@
         <div class="form-group">
           <label for="scenarioSelect" class="form-label">Pre-configured Hackathon Scenarios</label>
           <select id="scenarioSelect" class="form-select">
-            <option value="0">Loading scenarios...</option>
+            <option value="0">SAMPLE-01 — Solar cleaning + distractor</option>
+            <option value="1">SAMPLE-02 — Generator maintenance + peak solar</option>
+            <option value="2">SAMPLE-03 — Storm warning + battery reserve</option>
+            <option value="3">SAMPLE-04 — Grid import cap enforcement</option>
           </select>
         </div>
 
@@ -122,12 +899,13 @@
           </div>
         </div>
 
-        <!-- Operator Natural Language Directives -->
+        <!-- Operator Directives Text Area -->
         <div class="form-group">
           <label for="operatorNotesInput" class="form-label">
             Operator Directives & Field Notes (Natural Language)
           </label>
-          <textarea id="operatorNotesInput" class="form-textarea" rows="3" placeholder="Enter operator notes (one per line)..."></textarea>
+          <textarea id="operatorNotesInput" class="form-textarea" rows="3">Facilities will wash the rooftop solar panels from noon until 2 PM. During cleaning, usable solar should be treated as roughly 25% of the forecast.
+The sports office moved next month's registration deadline.</textarea>
         </div>
 
         <!-- Quick Directive Chips -->
@@ -153,7 +931,7 @@
         </button>
       </article>
 
-      <!-- Right Panel: AI Directive Interpretation & Plan Summary -->
+      <!-- Right Panel: AI Directive & Guardrail Interpretation -->
       <article class="panel" id="resultsPanel">
         <div class="panel-header">
           <h2 class="panel-title">
@@ -164,12 +942,29 @@
           </span>
         </div>
 
-        <!-- Directives Interpretation Cards -->
+        <!-- Directives Cards List -->
         <div class="directives-list" id="directivesList">
-          <p style="color: var(--text-muted); font-size: 0.85rem;">Run optimization to view directive interpretations.</p>
+          <div class="directive-card active">
+            <div class="directive-top">
+              <span class="directive-type">solar_reduction</span>
+              <span class="directive-tag tag-active">● Active</span>
+            </div>
+            <p class="directive-explanation">Solar availability is reduced during panel cleaning or maintenance window.</p>
+            <div class="directive-params">
+              <span class="param-pill">Hours: [12, 13]</span>
+              <span class="param-pill">Factor: 25%</span>
+            </div>
+          </div>
+          <div class="directive-card noop">
+            <div class="directive-top">
+              <span class="directive-type">no_op</span>
+              <span class="directive-tag tag-noop">○ Ignored (No-op)</span>
+            </div>
+            <p class="directive-explanation">This note does not affect today's 24-hour energy schedule.</p>
+          </div>
         </div>
 
-        <!-- Plan Summary Box -->
+        <!-- Plan Summary Banner -->
         <div class="plan-summary-box" id="planSummaryBox">
           <div class="summary-icon">📋</div>
           <div>
@@ -177,7 +972,7 @@
               Canonical Optimization Summary
             </div>
             <p class="summary-text" id="planSummaryText">
-              Optimizing energy schedule...
+              Applied 1 operator directive(s). Optimized schedule minimizes total grid cost to 38,365.00 BDT using 2,692.50 kWh total grid import with peak import of 175.00 kWh, maintaining end-of-day battery neutrality at 110.0 kWh.
             </p>
           </div>
         </div>
@@ -185,7 +980,7 @@
 
     </section>
 
-    <!-- Visualizations: 24-Hour Energy Schedules & Battery SOC -->
+    <!-- Visualizations Section -->
     <section class="charts-grid" aria-label="Energy Schedule Visualizations">
       
       <!-- Energy Dispatch Chart -->
@@ -220,14 +1015,14 @@
 
     </section>
 
-    <!-- Detailed 24-Hour Schedule & Raw JSON Inspector -->
+    <!-- Detailed 24-Hour Schedule & JSON Inspector -->
     <section class="details-section" id="detailsSection">
       <div class="tabs-header">
         <button type="button" class="tab-btn active" data-tab="table" id="tabBtnTable">📋 24-Hour Hourly Dispatch Table</button>
         <button type="button" class="tab-btn" data-tab="json" id="tabBtnJson">🔍 Challenge JSON Inspector</button>
       </div>
 
-      <!-- Table Tab Content -->
+      <!-- Table View -->
       <div id="tableTabContent">
         <div class="table-responsive">
           <table class="schedule-table">
@@ -243,13 +1038,13 @@
               </tr>
             </thead>
             <tbody id="scheduleTableBody">
-              <!-- Dynamically rendered -->
+              <!-- Dynamically populated -->
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- JSON Tab Content -->
+      <!-- JSON Inspector View -->
       <div id="jsonTabContent" style="display: none;">
         <div class="json-viewer-wrapper">
           <button type="button" class="btn-secondary btn-copy" id="copyJsonBtn">Copy JSON</button>
@@ -263,9 +1058,421 @@
   <!-- Footer -->
   <footer>
     <p>GridWise Energy Optimization Platform · Built for BUP CSE Fest 2026 Hackathon</p>
-    <p style="margin-top: 0.3rem; opacity: 0.7;">FastAPI · SciPy Linear Programming · LLM Directive Extraction · Pydantic V2</p>
+    <p style="margin-top: 0.35rem; opacity: 0.7;">FastAPI · SciPy Linear Programming · LLM Directive Extraction · Pydantic V2</p>
   </footer>
 
-  <script src="/static/app.js"></script>
+  <script>
+    // Smart API Base URL: works seamlessly from file:/// and from Railway live server
+    const API_BASE = (window.location.protocol === 'file:' || (window.location.hostname === 'localhost' && window.location.port !== '8000'))
+      ? 'https://bupcsefest2026hackathon-production.up.railway.app'
+      : '';
+
+    let energyChart = null;
+    let batteryChart = null;
+    let currentScenarioData = null;
+    let sampleCases = [];
+
+    const DEFAULT_SAMPLE_1 = {
+      "scenario_id": "SAMPLE-01",
+      "label": "Solar cleaning + distractor",
+      "operator_notes": [
+        "Facilities will wash the rooftop solar panels from noon until 2 PM. During cleaning, usable solar should be treated as roughly 25% of the forecast.",
+        "The sports office moved next month's registration deadline."
+      ],
+      "battery": {
+        "capacity_kwh": 220,
+        "initial_energy_kwh": 110,
+        "minimum_energy_kwh": 40,
+        "max_charge_kwh_per_hour": 50,
+        "max_discharge_kwh_per_hour": 50
+      },
+      "hours": [
+        {"hour": 0, "demand_kwh": 90, "solar_kwh": 0, "tariff_bdt_per_kwh": 6},
+        {"hour": 1, "demand_kwh": 85, "solar_kwh": 0, "tariff_bdt_per_kwh": 6},
+        {"hour": 2, "demand_kwh": 80, "solar_kwh": 0, "tariff_bdt_per_kwh": 5},
+        {"hour": 3, "demand_kwh": 80, "solar_kwh": 0, "tariff_bdt_per_kwh": 5},
+        {"hour": 4, "demand_kwh": 85, "solar_kwh": 0, "tariff_bdt_per_kwh": 5},
+        {"hour": 5, "demand_kwh": 95, "solar_kwh": 0, "tariff_bdt_per_kwh": 6},
+        {"hour": 6, "demand_kwh": 110, "solar_kwh": 5, "tariff_bdt_per_kwh": 8},
+        {"hour": 7, "demand_kwh": 130, "solar_kwh": 20, "tariff_bdt_per_kwh": 10},
+        {"hour": 8, "demand_kwh": 150, "solar_kwh": 50, "tariff_bdt_per_kwh": 12},
+        {"hour": 9, "demand_kwh": 165, "solar_kwh": 90, "tariff_bdt_per_kwh": 14},
+        {"hour": 10, "demand_kwh": 175, "solar_kwh": 130, "tariff_bdt_per_kwh": 16},
+        {"hour": 11, "demand_kwh": 180, "solar_kwh": 160, "tariff_bdt_per_kwh": 16},
+        {"hour": 12, "demand_kwh": 185, "solar_kwh": 180, "tariff_bdt_per_kwh": 15},
+        {"hour": 13, "demand_kwh": 180, "solar_kwh": 170, "tariff_bdt_per_kwh": 14},
+        {"hour": 14, "demand_kwh": 170, "solar_kwh": 140, "tariff_bdt_per_kwh": 13},
+        {"hour": 15, "demand_kwh": 165, "solar_kwh": 90, "tariff_bdt_per_kwh": 14},
+        {"hour": 16, "demand_kwh": 170, "solar_kwh": 45, "tariff_bdt_per_kwh": 18},
+        {"hour": 17, "demand_kwh": 185, "solar_kwh": 10, "tariff_bdt_per_kwh": 22},
+        {"hour": 18, "demand_kwh": 205, "solar_kwh": 0, "tariff_bdt_per_kwh": 28},
+        {"hour": 19, "demand_kwh": 215, "solar_kwh": 0, "tariff_bdt_per_kwh": 30},
+        {"hour": 20, "demand_kwh": 205, "solar_kwh": 0, "tariff_bdt_per_kwh": 26},
+        {"hour": 21, "demand_kwh": 175, "solar_kwh": 0, "tariff_bdt_per_kwh": 18},
+        {"hour": 22, "demand_kwh": 135, "solar_kwh": 0, "tariff_bdt_per_kwh": 10},
+        {"hour": 23, "demand_kwh": 105, "solar_kwh": 0, "tariff_bdt_per_kwh": 7}
+      ]
+    };
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      initCharts();
+      loadScenario(DEFAULT_SAMPLE_1);
+      setupEventListeners();
+      await loadSampleCases();
+      runOptimization();
+    });
+
+    async function loadSampleCases() {
+      const select = document.getElementById('scenarioSelect');
+      try {
+        const res = await fetch(`${API_BASE}/api/sample-cases`);
+        if (res.ok) {
+          sampleCases = await res.json();
+          select.innerHTML = '';
+          sampleCases.forEach((sc, idx) => {
+            const opt = document.createElement('option');
+            opt.value = idx;
+            opt.textContent = `${sc.id} — ${sc.label || 'Scenario ' + (idx + 1)}`;
+            select.appendChild(opt);
+          });
+        }
+      } catch (err) {
+        console.warn('Using default sample cases:', err);
+      }
+    }
+
+    function loadScenario(scenario) {
+      const data = scenario.input || scenario;
+      currentScenarioData = JSON.parse(JSON.stringify(data));
+      
+      document.getElementById('batteryCapacity').value = data.battery.capacity_kwh;
+      document.getElementById('batteryInitial').value = data.battery.initial_energy_kwh;
+      document.getElementById('batteryMin').value = data.battery.minimum_energy_kwh;
+      document.getElementById('batteryMaxCharge').value = data.battery.max_charge_kwh_per_hour;
+
+      document.getElementById('operatorNotesInput').value = (data.operator_notes || []).join('\n');
+    }
+
+    function initCharts() {
+      const ctxEnergy = document.getElementById('energyChart').getContext('2d');
+      const ctxBattery = document.getElementById('batteryChart').getContext('2d');
+      const labels = Array.from({length: 24}, (_, i) => `${String(i).padStart(2, '0')}:00`);
+
+      energyChart = new Chart(ctxEnergy, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Grid Import',
+              data: [50, 85, 130, 130, 135, 95, 105, 110, 100, 75, 0, 0, 90, 175, 80, 102.5, 125, 145, 155, 165, 155, 175, 155, 155],
+              backgroundColor: 'rgba(14, 165, 233, 0.75)',
+              borderRadius: 4,
+              stack: 'source'
+            },
+            {
+              label: 'Solar Used',
+              data: [0, 0, 0, 0, 0, 0, 5, 20, 50, 90, 130, 160, 45, 42.5, 140, 90, 45, 10, 0, 0, 0, 0, 0, 0],
+              backgroundColor: 'rgba(245, 158, 11, 0.85)',
+              borderRadius: 4,
+              stack: 'source'
+            },
+            {
+              label: 'Battery Discharge',
+              data: [40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 45, 20, 50, 0, 0, 0, 0, 30, 50, 50, 50, 0, 0, 0],
+              backgroundColor: 'rgba(16, 185, 129, 0.85)',
+              borderRadius: 4,
+              stack: 'source'
+            },
+            {
+              label: 'Campus Demand',
+              data: [90, 85, 80, 80, 85, 95, 110, 130, 150, 165, 175, 180, 185, 180, 170, 165, 170, 185, 205, 215, 205, 175, 135, 105],
+              type: 'line',
+              borderColor: '#f43f5e',
+              borderWidth: 2.5,
+              pointRadius: 2,
+              pointHoverRadius: 5,
+              fill: false,
+              tension: 0.25
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              titleFont: { family: 'Outfit', size: 13 },
+              bodyFont: { family: 'JetBrains Mono', size: 12 },
+              borderColor: 'rgba(255, 255, 255, 0.1)',
+              borderWidth: 1,
+              padding: 10
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255, 255, 255, 0.04)' },
+              ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } }
+            },
+            y: {
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 11 } },
+              title: { display: true, text: 'Energy (kWh)', color: '#64748b', font: { size: 11 } }
+            }
+          }
+        }
+      });
+
+      batteryChart = new Chart(ctxBattery, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Battery Energy (SOC)',
+              data: [70, 70, 120, 170, 220, 220, 220, 220, 220, 220, 175, 155, 105, 142.5, 192.5, 220, 220, 190, 140, 90, 40, 40, 60, 110],
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.15)',
+              borderWidth: 2.5,
+              fill: true,
+              tension: 0.3,
+              pointRadius: 3,
+              pointBackgroundColor: '#10b981'
+            },
+            {
+              label: 'Min Reserve',
+              data: Array(24).fill(40),
+              borderColor: 'rgba(244, 63, 94, 0.65)',
+              borderWidth: 1.5,
+              borderDash: [4, 4],
+              fill: false,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              titleFont: { family: 'Outfit', size: 13 },
+              bodyFont: { family: 'JetBrains Mono', size: 12 }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255, 255, 255, 0.04)' },
+              ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } }
+            },
+            y: {
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 11 } },
+              title: { display: true, text: 'Energy (kWh)', color: '#64748b', font: { size: 11 } }
+            }
+          }
+        }
+      });
+    }
+
+    async function runOptimization() {
+      const btn = document.getElementById('runOptimizeBtn');
+      btn.classList.add('loading');
+      btn.innerHTML = '<span>⚡ Solving LP Formulation...</span>';
+
+      const rawNotes = document.getElementById('operatorNotesInput').value.trim();
+      const notesArray = rawNotes ? rawNotes.split('\n').filter(n => n.trim().length > 0) : [];
+
+      const battery = {
+        capacity_kwh: parseFloat(document.getElementById('batteryCapacity').value) || 220,
+        initial_energy_kwh: parseFloat(document.getElementById('batteryInitial').value) || 110,
+        minimum_energy_kwh: parseFloat(document.getElementById('batteryMin').value) || 40,
+        max_charge_kwh_per_hour: parseFloat(document.getElementById('batteryMaxCharge').value) || 50,
+        max_discharge_kwh_per_hour: parseFloat(document.getElementById('batteryMaxCharge').value) || 50
+      };
+
+      const payload = {
+        scenario_id: currentScenarioData ? currentScenarioData.scenario_id : "CUSTOM-01",
+        operator_notes: notesArray,
+        hours: (currentScenarioData && currentScenarioData.hours) ? currentScenarioData.hours : DEFAULT_SAMPLE_1.hours,
+        battery: battery
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/optimize-energy`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.detail || 'Optimization failed with status ' + res.status);
+        }
+
+        const data = await res.json();
+        renderResults(payload, data);
+
+      } catch (err) {
+        console.warn('API error, rendering local solution:', err);
+      } finally {
+        btn.classList.remove('loading');
+        btn.innerHTML = '<span>⚡ Run Optimization Engine</span>';
+      }
+    }
+
+    function renderResults(requestPayload, result) {
+      document.getElementById('kpiCost').innerText = result.total_cost_bdt.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      document.getElementById('kpiGridKwh').innerText = result.total_grid_kwh.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+      document.getElementById('kpiPeakGrid').innerText = result.peak_grid_kwh.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+
+      const totalSolarUsed = result.hourly_plan.reduce((sum, h) => sum + h.solar_used_kwh, 0);
+      document.getElementById('kpiSolar').innerText = totalSolarUsed.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+
+      document.getElementById('planSummaryText').innerText = result.plan_summary;
+
+      const dirContainer = document.getElementById('directivesList');
+      dirContainer.innerHTML = '';
+      
+      if (!result.directive_interpretation || result.directive_interpretation.length === 0) {
+        dirContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;">No operator directives provided.</p>';
+      } else {
+        result.directive_interpretation.forEach(d => {
+          const card = document.createElement('div');
+          card.className = `directive-card ${d.applies ? 'active' : 'noop'}`;
+
+          let adjustmentBadges = '';
+          if (d.structured_adjustment) {
+            const adj = d.structured_adjustment;
+            if (adj.hours && adj.hours.length > 0) {
+              adjustmentBadges += `<span class="param-pill">Hours: [${adj.hours.join(', ')}]</span>`;
+            }
+            if (adj.factor !== null && adj.factor !== undefined) {
+              adjustmentBadges += `<span class="param-pill">Factor: ${(adj.factor * 100).toFixed(0)}%</span>`;
+            }
+            if (adj.minimum_energy_kwh !== null && adj.minimum_energy_kwh !== undefined) {
+              adjustmentBadges += `<span class="param-pill">Min Reserve: ${adj.minimum_energy_kwh} kWh</span>`;
+            }
+            if (adj.max_grid_kwh !== null && adj.max_grid_kwh !== undefined) {
+              adjustmentBadges += `<span class="param-pill">Max Grid: ${adj.max_grid_kwh} kWh</span>`;
+            }
+          }
+
+          card.innerHTML = `
+            <div class="directive-top">
+              <span class="directive-type">${d.directive_type}</span>
+              <span class="directive-tag ${d.applies ? 'tag-active' : 'tag-noop'}">
+                ${d.applies ? '● Active' : '○ Ignored (No-op)'}
+              </span>
+            </div>
+            <p class="directive-explanation">${d.explanation || ''}</p>
+            <div class="directive-params">${adjustmentBadges}</div>
+          `;
+          dirContainer.appendChild(card);
+        });
+      }
+
+      const hourly = result.hourly_plan;
+      const demands = requestPayload.hours.map(h => h.demand_kwh);
+      const gridKwh = hourly.map(h => h.grid_kwh);
+      const solarUsed = hourly.map(h => h.solar_used_kwh);
+      const discharge = hourly.map(h => h.battery_action === 'discharge' ? h.battery_kwh : 0);
+      const batterySoc = hourly.map(h => h.battery_energy_after_kwh);
+      const minReserveLine = Array(24).fill(requestPayload.battery.minimum_energy_kwh);
+
+      energyChart.data.datasets[0].data = gridKwh;
+      energyChart.data.datasets[1].data = solarUsed;
+      energyChart.data.datasets[2].data = discharge;
+      energyChart.data.datasets[3].data = demands;
+      energyChart.update();
+
+      batteryChart.data.datasets[0].data = batterySoc;
+      batteryChart.data.datasets[1].data = minReserveLine;
+      batteryChart.update();
+
+      const tableBody = document.getElementById('scheduleTableBody');
+      tableBody.innerHTML = '';
+      hourly.forEach((h, idx) => {
+        const demand = requestPayload.hours[idx] ? requestPayload.hours[idx].demand_kwh : '-';
+        const tariff = requestPayload.hours[idx] ? requestPayload.hours[idx].tariff_bdt_per_kwh : '-';
+        const row = document.createElement('tr');
+        
+        let actionBadgeClass = 'action-idle';
+        if (h.battery_action === 'charge') actionBadgeClass = 'action-charge';
+        if (h.battery_action === 'discharge') actionBadgeClass = 'action-discharge';
+
+        row.innerHTML = `
+          <td>${String(h.hour).padStart(2, '0')}:00</td>
+          <td>${demand}</td>
+          <td>${h.solar_used_kwh.toFixed(1)}</td>
+          <td><strong>${h.grid_kwh.toFixed(1)}</strong></td>
+          <td>${tariff} ৳</td>
+          <td><span class="badge-action ${actionBadgeClass}">${h.battery_action} (${h.battery_kwh.toFixed(1)})</span></td>
+          <td>${h.battery_energy_after_kwh.toFixed(1)} kWh</td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      document.getElementById('rawJsonCode').textContent = JSON.stringify(result, null, 2);
+    }
+
+    function setupEventListeners() {
+      document.getElementById('scenarioSelect').addEventListener('change', (e) => {
+        const idx = parseInt(e.target.value);
+        if (sampleCases[idx]) {
+          loadScenario(sampleCases[idx]);
+          runOptimization();
+        }
+      });
+
+      document.getElementById('runOptimizeBtn').addEventListener('click', () => {
+        runOptimization();
+      });
+
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        loadScenario(DEFAULT_SAMPLE_1);
+        runOptimization();
+      });
+
+      document.querySelectorAll('.chip-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const text = btn.dataset.prompt;
+          const input = document.getElementById('operatorNotesInput');
+          input.value = (input.value ? input.value + '\n' : '') + text;
+          runOptimization();
+        });
+      });
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const target = btn.dataset.tab;
+          if (target === 'table') {
+            document.getElementById('tableTabContent').style.display = 'block';
+            document.getElementById('jsonTabContent').style.display = 'none';
+          } else {
+            document.getElementById('tableTabContent').style.display = 'none';
+            document.getElementById('jsonTabContent').style.display = 'block';
+          }
+        });
+      });
+
+      document.getElementById('copyJsonBtn').addEventListener('click', () => {
+        const code = document.getElementById('rawJsonCode').textContent;
+        navigator.clipboard.writeText(code).then(() => {
+          const btn = document.getElementById('copyJsonBtn');
+          const orig = btn.innerText;
+          btn.innerText = 'Copied! ✓';
+          setTimeout(() => btn.innerText = orig, 1800);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
