@@ -12,6 +12,7 @@ from fastapi import FastAPI, HTTPException, status, Request
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.models import (
     OptimizeEnergyRequest,
@@ -33,6 +34,15 @@ app = FastAPI(
     title=settings.APP_NAME,
     version="1.0.0",
     description="LLM-Assisted Smart Campus Energy Optimization API for GridWise Challenge"
+)
+
+# Enable CORS for all origins (judging harness, browser dashboard, local files)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Mount static frontend assets
