@@ -7,9 +7,13 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://bupcsefest2026hackathon-production.up.railway.app
     permissions:
       contents: read
       packages: write
+      deployments: write
 
     steps:
       - name: Checkout code
