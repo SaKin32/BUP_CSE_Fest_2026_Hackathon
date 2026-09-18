@@ -3,7 +3,15 @@
 > **BUP CSE Fest 2026 Hackathon · Online Preliminary Round**  
 > **LLM-Assisted Operator Directive Interpretation & Energy Optimization Service**
 
-GridWise is a production-ready HTTP API service built with FastAPI, SciPy, and Pydantic. It translates natural-language operator notes into machine-checkable structured energy directives via an LLM + Guardrail pipeline, formulates a 24-hour Linear Programming (LP) cost minimization model, and returns an optimal hourly energy schedule for campus smart microgrids.
+[![Deployment Status](https://img.shields.io/badge/Deployment-Live%20on%20Railway-success?style=for-the-badge&logo=railway)](https://bupcsefest2026hackathon-production.up.railway.app)
+[![API Docs](https://img.shields.io/badge/API%20Docs-Swagger%20UI-blue?style=for-the-badge&logo=fastapi)](https://bupcsefest2026hackathon-production.up.railway.app/docs)
+[![Health Check](https://img.shields.io/badge/Health%20Check-200%20OK-brightgreen?style=for-the-badge)](https://bupcsefest2026hackathon-production.up.railway.app/health)
+
+### 🌐 Live Production Endpoints
+- **Base URL:** `https://bupcsefest2026hackathon-production.up.railway.app`
+- **Health Check:** `https://bupcsefest2026hackathon-production.up.railway.app/health`
+- **Interactive Swagger Docs:** `https://bupcsefest2026hackathon-production.up.railway.app/docs`
+- **Primary API:** `POST https://bupcsefest2026hackathon-production.up.railway.app/optimize-energy`
 
 ---
 
