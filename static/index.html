@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GridWise — Smart Campus Energy Optimizer | BUP CSE Fest 2026</title>
+  <meta name="description" content="Production-ready LLM-assisted operator directive interpretation and Linear Programming 24-hour smart campus energy optimizer.">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="navbar" id="mainHeader">
+    <div class="brand-wrapper">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-titles">
+        <h1>GridWise <span class="badge-hackathon">BUP CSE Fest 2026</span></h1>
+        <p class="brand-subtitle">Smart Campus Microgrid Energy Optimizer & LLM Guardrail Pipeline</p>
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <div class="status-pill" id="systemStatusPill">
+        <span class="status-dot"></span>
+        <span>Service Active</span>
+      </div>
+      <a href="/docs" target="_blank" class="btn-secondary" id="navDocsBtn">
+        <span>📖 API Docs</span>
+      </a>
+      <a href="/health" target="_blank" class="btn-secondary" id="navHealthBtn">
+        <span>💚 Health</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+
+    <!-- KPI Metric Bar -->
+    <section class="kpi-grid" id="kpiBar" aria-label="Key Performance Indicators">
+      <div class="kpi-card emerald" id="kpiCardCost">
+        <div class="kpi-header">
+          <span class="kpi-title">Total Energy Cost</span>
+          <span class="kpi-icon">💰</span>
+        </div>
+        <div class="kpi-value"><span id="kpiCost">0.00</span> <span class="kpi-unit">BDT</span></div>
+        <div class="kpi-subtext">24-hour LP minimized cost</div>
+      </div>
+
+      <div class="kpi-card cyan" id="kpiCardGrid">
+        <div class="kpi-header">
+          <span class="kpi-title">Total Grid Import</span>
+          <span class="kpi-icon">⚡</span>
+        </div>
+        <div class="kpi-value"><span id="kpiGridKwh">0.0</span> <span class="kpi-unit">kWh</span></div>
+        <div class="kpi-subtext">Scheduled campus power drawn</div>
+      </div>
+
+      <div class="kpi-card amber" id="kpiCardPeak">
+        <div class="kpi-header">
+          <span class="kpi-title">Peak Grid Demand</span>
+          <span class="kpi-icon">📈</span>
+        </div>
+        <div class="kpi-value"><span id="kpiPeakGrid">0.0</span> <span class="kpi-unit">kWh</span></div>
+        <div class="kpi-subtext">Highest single-hour import</div>
+      </div>
+
+      <div class="kpi-card purple" id="kpiCardSolar">
+        <div class="kpi-header">
+          <span class="kpi-title">Solar Energy Used</span>
+          <span class="kpi-icon">☀️</span>
+        </div>
+        <div class="kpi-value"><span id="kpiSolar">0.0</span> <span class="kpi-unit">kWh</span></div>
+        <div class="kpi-subtext">Green renewable energy consumed</div>
+      </div>
+    </section>
+
+    <!-- Main Workspace Split Grid -->
+    <section class="workspace-grid" aria-label="Microgrid Control Workspace">
+      
+      <!-- Left Panel: Microgrid Configuration & Operator Directives -->
+      <article class="panel" id="inputConsolePanel">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <span>⚙️</span> Microgrid Input & Directives
+          </h2>
+          <button type="button" class="panel-action" id="resetBtn">Reset Scenario</button>
+        </div>
+
+        <!-- Scenario Selector -->
+        <div class="form-group">
+          <label for="scenarioSelect" class="form-label">Pre-configured Hackathon Scenarios</label>
+          <select id="scenarioSelect" class="form-select">
+            <option value="0">Loading scenarios...</option>
+          </select>
+        </div>
+
+        <!-- Battery Configuration -->
+        <div class="form-group">
+          <label class="form-label">Battery Storage Specifications (BESS)</label>
+          <div class="battery-grid">
+            <div class="battery-field">
+              <label for="batteryCapacity">Capacity (kWh)</label>
+              <input type="number" id="batteryCapacity" value="220" step="10">
+            </div>
+            <div class="battery-field">
+              <label for="batteryInitial">Initial Energy (kWh)</label>
+              <input type="number" id="batteryInitial" value="110" step="10">
+            </div>
+            <div class="battery-field">
+              <label for="batteryMin">Min Reserve (kWh)</label>
+              <input type="number" id="batteryMin" value="40" step="5">
+            </div>
+            <div class="battery-field">
+              <label for="batteryMaxCharge">Max Rate (kW/h)</label>
+              <input type="number" id="batteryMaxCharge" value="50" step="5">
+            </div>
+            <input type="hidden" id="batteryMaxDischarge" value="50">
+          </div>
+        </div>
+
+        <!-- Operator Natural Language Directives -->
+        <div class="form-group">
+          <label for="operatorNotesInput" class="form-label">
+            Operator Directives & Field Notes (Natural Language)
+          </label>
+          <textarea id="operatorNotesInput" class="form-textarea" rows="3" placeholder="Enter operator notes (one per line)..."></textarea>
+        </div>
+
+        <!-- Quick Directive Chips -->
+        <div class="chips-container" aria-label="Suggested Directives">
+          <span style="font-size: 0.74rem; color: var(--text-muted); width: 100%;">💡 Quick Directive Presets:</span>
+          <button type="button" class="chip-btn" data-prompt="Facilities will wash rooftop solar panels from noon until 2 PM (roughly 25% forecast).">
+            ☀️ Solar Cleaning 12-2 PM
+          </button>
+          <button type="button" class="chip-btn" data-prompt="Maintain 50% battery reserve from 6 PM to 9 PM due to forecasted grid instability.">
+            🛡️ Battery Reserve 6-9 PM
+          </button>
+          <button type="button" class="chip-btn" data-prompt="Substation limit: keep grid imports below 120 kWh from 17:00 to 20:00.">
+            ⚡ Grid Import Cap
+          </button>
+          <button type="button" class="chip-btn" data-prompt="The sports office moved next month's registration deadline.">
+            🚫 Distractor / No-op
+          </button>
+        </div>
+
+        <!-- Run Optimization Button -->
+        <button type="button" class="btn-primary" id="runOptimizeBtn">
+          <span>⚡ Run Optimization Engine</span>
+        </button>
+      </article>
+
+      <!-- Right Panel: AI Directive Interpretation & Plan Summary -->
+      <article class="panel" id="resultsPanel">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <span>🧠</span> LLM Directive & Guardrail Interpretation
+          </h2>
+          <span class="status-pill" style="font-size: 0.72rem; padding: 0.2rem 0.6rem;">
+            Guardrails Enforced
+          </span>
+        </div>
+
+        <!-- Directives Interpretation Cards -->
+        <div class="directives-list" id="directivesList">
+          <p style="color: var(--text-muted); font-size: 0.85rem;">Run optimization to view directive interpretations.</p>
+        </div>
+
+        <!-- Plan Summary Box -->
+        <div class="plan-summary-box" id="planSummaryBox">
+          <div class="summary-icon">📋</div>
+          <div>
+            <div style="font-size: 0.76rem; text-transform: uppercase; color: var(--emerald-400); font-weight: 700; margin-bottom: 0.25rem;">
+              Canonical Optimization Summary
+            </div>
+            <p class="summary-text" id="planSummaryText">
+              Optimizing energy schedule...
+            </p>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- Visualizations: 24-Hour Energy Schedules & Battery SOC -->
+    <section class="charts-grid" aria-label="Energy Schedule Visualizations">
+      
+      <!-- Energy Dispatch Chart -->
+      <div class="chart-card" id="energyDispatchCard">
+        <div class="chart-header">
+          <h3 class="chart-title">📊 24-Hour Energy Dispatch (Hourly Balance)</h3>
+          <div class="chart-legend-custom">
+            <div class="legend-item"><span class="legend-dot" style="background: #0ea5e9;"></span> Grid</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #f59e0b;"></span> Solar</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #10b981;"></span> Battery Discharge</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #f43f5e;"></span> Demand</div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="energyChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Battery SOC Chart -->
+      <div class="chart-card" id="batterySocCard">
+        <div class="chart-header">
+          <h3 class="chart-title">🔋 Battery Energy Trajectory (SOC)</h3>
+          <div class="chart-legend-custom">
+            <div class="legend-item"><span class="legend-dot" style="background: #10b981;"></span> Energy (kWh)</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #f43f5e;"></span> Min Reserve</div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="batteryChart"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Detailed 24-Hour Schedule & Raw JSON Inspector -->
+    <section class="details-section" id="detailsSection">
+      <div class="tabs-header">
+        <button type="button" class="tab-btn active" data-tab="table" id="tabBtnTable">📋 24-Hour Hourly Dispatch Table</button>
+        <button type="button" class="tab-btn" data-tab="json" id="tabBtnJson">🔍 Challenge JSON Inspector</button>
+      </div>
+
+      <!-- Table Tab Content -->
+      <div id="tableTabContent">
+        <div class="table-responsive">
+          <table class="schedule-table">
+            <thead>
+              <tr>
+                <th>Hour</th>
+                <th>Demand (kWh)</th>
+                <th>Solar Used (kWh)</th>
+                <th>Grid Import (kWh)</th>
+                <th>Tariff (BDT)</th>
+                <th>Battery Action</th>
+                <th>Battery Energy After</th>
+              </tr>
+            </thead>
+            <tbody id="scheduleTableBody">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- JSON Tab Content -->
+      <div id="jsonTabContent" style="display: none;">
+        <div class="json-viewer-wrapper">
+          <button type="button" class="btn-secondary btn-copy" id="copyJsonBtn">Copy JSON</button>
+          <pre class="json-code" id="rawJsonCode">// Response JSON will appear here...</pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>GridWise Energy Optimization Platform · Built for BUP CSE Fest 2026 Hackathon</p>
+    <p style="margin-top: 0.3rem; opacity: 0.7;">FastAPI · SciPy Linear Programming · LLM Directive Extraction · Pydantic V2</p>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -47,3 +47,14 @@ def test_malformed_request():
     """Verify 400 Bad Request on invalid payload."""
     response = client.post("/optimize-energy", json={"invalid": "payload"})
     assert response.status_code == 400
+
+def test_dashboard_endpoint():
+    """Verify GET / and /dashboard return the UI dashboard HTML."""
+    response = client.get("/")
+    assert response.status_code == 200
+
+def test_sample_cases_endpoint():
+    """Verify GET /api/sample-cases returns the list of hackathon sample cases."""
+    response = client.get("/api/sample-cases")
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)

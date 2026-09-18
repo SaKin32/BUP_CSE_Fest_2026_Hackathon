@@ -7,8 +7,10 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
+import json
 from fastapi import FastAPI, HTTPException, status, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
 
 from app.models import (
@@ -33,6 +35,11 @@ app = FastAPI(
     description="LLM-Assisted Smart Campus Energy Optimization API for GridWise Challenge"
 )
 
+# Mount static frontend assets
+STATIC_DIR = ROOT_DIR / "static"
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
 # Custom exception handler for 400 bad request on validation errors
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
@@ -52,14 +59,39 @@ async def generic_exception_handler(request: Request, exc: Exception):
     )
 
 @app.get("/", include_in_schema=False)
-async def root():
-    """Root endpoint welcoming visitors and directing to /health and /optimize-energy."""
+@app.get("/dashboard", include_in_schema=False)
+async def root(request: Request):
+    """Serve the interactive GridWise UI dashboard, or JSON if specifically requested by API client."""
+    accept = request.headers.get("accept", "")
+    index_path = STATIC_DIR / "index.html"
+    if "application/json" in accept and "text/html" not in accept:
+        return {
+            "service": settings.APP_NAME,
+            "status": "online",
+            "health_check": "/health",
+            "primary_endpoint": "POST /optimize-energy",
+            "dashboard": "/dashboard"
+        }
+    if index_path.exists():
+        return FileResponse(str(index_path))
     return {
         "service": settings.APP_NAME,
         "status": "online",
         "health_check": "/health",
         "primary_endpoint": "POST /optimize-energy"
     }
+
+@app.get("/api/sample-cases", include_in_schema=False)
+async def get_sample_cases():
+    """Returns pre-configured sample hackathon scenarios for the dashboard."""
+    sample_file = ROOT_DIR / "sample_cases.json"
+    if sample_file.exists():
+        try:
+            with open(sample_file, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            logger.warning(f"Failed to load sample_cases.json: {e}")
+    return []
 
 @app.get("/health", response_model=HealthResponse, status_code=status.HTTP_200_OK)
 async def health_check():
